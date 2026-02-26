@@ -57,12 +57,24 @@ This system processes resumes through a multi-stage NLP pipeline, comparing them
 - 4GB RAM (for NLP models)
 - 2GB disk space
 
-## Installation
+## Quick Start
 
-### Database Setup
+### Prerequisites
+- **Python 3.12+** - [Download here](https://www.python.org/downloads/)
+- **Node.js 18+** - [Download here](https://nodejs.org/)
+- **MySQL 8.0+** - [Download here](https://dev.mysql.com/downloads/mysql/)
 
-Create database and user:
+### Step 1: Clone and Setup
 
+```bash
+# Clone the repository
+git clone https://github.com/pragnyaambekar/ResumeScreener.git
+cd ResumeScreener
+```
+
+### Step 2: Database Setup
+
+Open MySQL and run:
 ```sql
 CREATE DATABASE resume_screener;
 CREATE USER 'resume_user'@'localhost' IDENTIFIED BY 'resume_ai';
@@ -70,71 +82,101 @@ GRANT ALL PRIVILEGES ON resume_screener.* TO 'resume_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-If upgrading from previous version:
+### Step 3: Backend Setup
 
-```sql
-USE resume_screener;
-ALTER TABLE resumes ADD COLUMN candidate_name VARCHAR(200) NULL AFTER resume_id;
-ALTER TABLE resumes ADD COLUMN jd_hash VARCHAR(64) NULL AFTER candidate_name;
-```
-
-### Backend Setup
-
+**For Mac/Linux:**
 ```bash
 cd backend
-
-# Create and activate virtual environment
 python3 -m venv venv
-source venv/bin/activate  # macOS/Linux
-# venv\Scripts\activate  # Windows
-
-# Install dependencies
+source venv/bin/activate
 pip install -r requirements.txt
-
-# Download NLP model
 python -m spacy download en_core_web_sm
-
-# Configure environment
 cp .env.example .env
-# Edit .env with your database credentials
 ```
 
-### Frontend Setup
+**For Windows:**
+```cmd
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+copy .env.example .env
+```
+
+Edit `.env` file with your database details if different from defaults.
+
+### Step 4: Frontend Setup
 
 ```bash
 cd frontend
 npm install
 ```
 
-### Optional: OCR Support
+### Step 5: Run the Application
 
-For image-based PDFs:
+**Terminal 1 - Start Backend:**
 
-```bash
-# Install Python libraries
-pip install pdf2image pytesseract pillow
-
-# Install Tesseract OCR
-brew install tesseract poppler  # macOS
-# sudo apt-get install tesseract-ocr poppler-utils  # Linux
-```
-
-## Running the Application
-
-Start backend:
+*Mac/Linux:*
 ```bash
 cd backend
 source venv/bin/activate
 uvicorn app.main:app --reload
 ```
 
-Start frontend:
+*Windows:*
+```cmd
+cd backend
+venv\Scripts\activate
+uvicorn app.main:app --reload
+```
+
+**Terminal 2 - Start Frontend:**
 ```bash
 cd frontend
 npm run dev
 ```
 
-Access at: http://localhost:5173
+**Open your browser:** http://localhost:5173
+
+### Optional: OCR Support (for image-based PDFs)
+
+**Mac:**
+```bash
+brew install tesseract poppler
+pip install pdf2image pytesseract pillow
+```
+
+**Windows:**
+1. Download Tesseract from [GitHub releases](https://github.com/UB-Mannheim/tesseract/wiki)
+2. Install and add to PATH
+3. Run: `pip install pdf2image pytesseract pillow`
+
+## Running the Application
+
+**Backend (Terminal 1):**
+
+*Mac/Linux:*
+```bash
+cd backend
+source venv/bin/activate
+uvicorn app.main:app --reload
+```
+
+*Windows:*
+```cmd
+cd backend
+venv\Scripts\activate
+uvicorn app.main:app --reload
+```
+
+**Frontend (Terminal 2):**
+```bash
+cd frontend
+npm run dev
+```
+
+**Access:** http://localhost:5173
 
 ## Usage
 
@@ -246,6 +288,33 @@ Quality gate filters resumes below minimum standards before scoring.
 - message
 
 ## Troubleshooting
+
+### Common Setup Issues
+
+**"python3 not found" (Windows):**
+- Use `python` instead of `python3`
+- Make sure Python is added to PATH during installation
+
+**"MySQL connection failed":**
+- Verify MySQL is running: `brew services start mysql` (Mac) or start MySQL service (Windows)
+- Check credentials in `.env` file match your MySQL setup
+- Try connecting with: `mysql -u resume_user -p`
+
+**"spaCy model not found":**
+```bash
+python -m spacy download en_core_web_sm
+```
+
+**"Port already in use":**
+- Backend (8000): Kill process with `lsof -ti:8000 | xargs kill` (Mac) or `netstat -ano | findstr :8000` (Windows)
+- Frontend (5173): Kill process or use different port
+
+**"Permission denied" (Mac/Linux):**
+```bash
+sudo chown -R $(whoami) ~/.npm
+```
+
+### Database Issues
 
 **Missing database columns:**
 ```sql
