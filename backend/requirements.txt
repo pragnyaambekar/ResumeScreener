@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+python-multipart
+pdfplumber
+python-docx
+spacy
+sentence-transformers
+scikit-learn
+numpy
+python-dotenv
+pdf2image
+pytesseract
+pillow

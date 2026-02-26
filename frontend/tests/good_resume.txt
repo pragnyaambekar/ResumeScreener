@@ -1,0 +1,3 @@
+Developed NLP models using Python and FastAPI.
+Worked on resume classification systems for 2.5 years.
+B.Tech in Computer Science, 2021.
